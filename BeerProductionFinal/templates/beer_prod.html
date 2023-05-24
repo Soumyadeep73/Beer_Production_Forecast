@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Beer Production Prediction</title>
+  <style>
+    .container {
+    margin-top: 50px;
+    margin: 0 auto;
+    max-width: 600px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  input[type="text"], input[type="submit"], input[type="reset"] {
+    display: block;
+    margin: 0 auto;
+    width: 60%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #3e8e41;
+  }
+
+  input[type="reset"] {
+    background-color: #3f3c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  input[type="reset"]:hover {
+    background-color: #141313;
+  }
+
+  .graph-section {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+  }
+  
+  canvas {
+    width: 80%;
+    max-width: 800px;
+  }
+  
+  </style>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var jsonData = JSON.parse('{{ data|safe }}');
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Month');
+        data.addColumn('number', 'Production');
+
+        // add the data to the DataTable
+        for (var i = 0; i < jsonData.length; i++) {
+                data.addRow([jsonData[i].Month, jsonData[i].Production]);
+        }
+
+        var options = {
+          title: 'Beer Productions Forecast',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+</head>
+<body>
+  <div class="container">
+    <form action="/predict" method="post">
+      <label for="prediction"><b>-: Enter Number of Year for Forecast :-</b></label>
+      <input type="text" id="prediction" name="prediction">
+      <input type="submit" class="btn btn-primary" value="Submit" id="subid">
+      <input type="reset" class="btn btn-danger" value="Reset">
+      </form>
+  </div>
+  <div class="graph-section">
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
+  </div>
+</body>
+</html>
